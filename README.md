@@ -1,5 +1,5 @@
 # LinkVault - Your Personal Link Organizer
-**Live Site (https://linkvault-organizer.netlify.app/)
+Live Site (https://linkvault-organizer.netlify.app/)
 
 **LinkVault** is a modern, feature-rich web application designed to help you organize, manage, and access your favorite websites and bookmarks efficiently. Built with pure HTML, CSS, and JavaScript, this application provides a sleek, intuitive interface for managing your digital resources with local storage persistence.
 
