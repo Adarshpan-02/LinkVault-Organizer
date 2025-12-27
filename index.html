@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LinkVault - Your Personal Link Organizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <span class="link-chain">&#128279;</span>   
+                </div>
+                <h1>LinkVault</h1>
+            </div>
+            <p class="tagline">Your Personal Link Sanctuary</p>
+        </header>
+
+        <!-- Search & Actions Bar -->
+        <div class="action-bar">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search your links..." autocomplete="off">
+                <span class="search-icon">&#128269;</span>
+            </div>
+            <div class="action-buttons">
+                <button id="addLinkBtn" class="btn btn-primary">
+                    <span>+</span> Add Link
+                </button>
+                <button id="importBtn" class="btn btn-secondary">
+                    <span class="arrow-up">&#8593;</span> Import
+                </button>
+                <button id="exportBtn" class="btn btn-secondary">
+                    <span class="arrow-down">&#8595;</span> Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalLinks">0</span>
+                <span class="stat-label">Total Links</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="favoritesCount">0</span>
+                <span class="stat-label">Favorites</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="learningCount">0</span>
+                <span class="stat-label">Learning</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="workCount">0</span>
+                <span class="stat-label">Work</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="personalCount">0</span>
+                <span class="stat-label">Personal</span>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <button class="tab-btn active" data-category="all">
+                <span class="tab-icon">&#9733;</span> All
+            </button>
+            <button class="tab-btn" data-category="favorites">
+                <span class="tab-icon">&#11088;</span> Favorites
+            </button>
+            <button class="tab-btn" data-category="learning">
+                <span class="tab-icon">&#128218;</span> Learning
+            </button>
+            <button class="tab-btn" data-category="work">
+                <span class="tab-icon">&#128188;</span> Work
+            </button>
+            <button class="tab-btn" data-category="personal">
+                <span class="tab-icon">&#127968;</span> Personal
+            </button>
+        </div>
+
+        <!-- Links Container -->
+        <div class="links-container" id="linksContainer">
+            <!-- Links will be dynamically inserted here -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">&#128279;</div>
+            <h3>No links yet!</h3>
+            <p>Start building your link collection by adding your first link or importing your browser bookmarks.</p>
+        </div>
+    </div>
+
+    <!-- Import Options Modal -->
+    <div class="modal-overlay" id="importModalOverlay">
+        <div class="modal import-modal">
+            <div class="modal-header">
+                <h2>Import Websites</h2>
+                <button class="close-btn" id="closeImportModal">&times;</button>
+            </div>
+            <div class="import-options">
+                <p class="import-description">Choose how you want to import your websites:</p>
+                
+                <div class="import-option" id="importBookmarks">
+                    <div class="import-option-icon">&#128278;</div>
+                    <div class="import-option-content">
+                        <h4>Browser Bookmarks</h4>
+                        <p>Import from Chrome, Firefox, Edge, or Safari exported HTML file</p>
+                    </div>
+                    <span class="import-arrow">&#8594;</span>
+                </div>
+                <input type="file" id="bookmarkFile" accept=".html,.htm" hidden>
+                
+                <div class="import-option" id="importJSON">
+                    <div class="import-option-icon">&#123;&#125;</div>
+                    <div class="import-option-content">
+                        <h4>JSON File</h4>
+                        <p>Import from a JSON file with title, url, and category fields</p>
+                    </div>
+                    <span class="import-arrow">&#8594;</span>
+                </div>
+                <input type="file" id="jsonFile" accept=".json" hidden>
+                
+                <div class="import-option" id="importCSV">
+                    <div class="import-option-icon">&#128196;</div>
+                    <div class="import-option-content">
+                        <h4>CSV File</h4>
+                        <p>Import from a spreadsheet with columns: title, url, category</p>
+                    </div>
+                    <span class="import-arrow">&#8594;</span>
+                </div>
+                <input type="file" id="csvFile" accept=".csv" hidden>
+                
+                <div class="import-option" id="importText">
+                    <div class="import-option-icon">&#128221;</div>
+                    <div class="import-option-content">
+                        <h4>Text / URL List</h4>
+                        <p>Import from a text file with one URL per line</p>
+                    </div>
+                    <span class="import-arrow">&#8594;</span>
+                </div>
+                <input type="file" id="textFile" accept=".txt" hidden>
+                
+                <div class="import-option" id="importPaste">
+                    <div class="import-option-icon">&#128203;</div>
+                    <div class="import-option-content">
+                        <h4>Paste URLs</h4>
+                        <p>Manually paste multiple URLs at once</p>
+                    </div>
+                    <span class="import-arrow">&#8594;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paste URLs Modal -->
+    <div class="modal-overlay" id="pasteModalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Paste URLs</h2>
+                <button class="close-btn" id="closePasteModal">&times;</button>
+            </div>
+            <form id="pasteForm">
+                <div class="form-group">
+                    <label for="pasteUrls">Enter URLs (one per line)</label>
+                    <textarea id="pasteUrls" placeholder="https://example1.com&#10;https://example2.com&#10;https://example3.com" rows="8"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Default Category for Imported URLs</label>
+                    <div class="category-selector">
+                        <label class="category-option">
+                            <input type="radio" name="pasteCategory" value="learning" checked>
+                            <span class="category-badge learning">&#128218; Learning</span>
+                        </label>
+                        <label class="category-option">
+                            <input type="radio" name="pasteCategory" value="work">
+                            <span class="category-badge work">&#128188; Work</span>
+                        </label>
+                        <label class="category-option">
+                            <input type="radio" name="pasteCategory" value="personal">
+                            <span class="category-badge personal">&#127968; Personal</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelPaste">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Import URLs</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Export Options Modal -->
+    <div class="modal-overlay" id="exportModalOverlay">
+        <div class="modal import-modal">
+            <div class="modal-header">
+                <h2>Export Websites</h2>
+                <button class="close-btn" id="closeExportModal">&times;</button>
+            </div>
+            <div class="import-options">
+                <p class="import-description">Choose your export format:</p>
+                
+                <div class="import-option" id="exportJSON">
+                    <div class="import-option-icon">&#123;&#125;</div>
+                    <div class="import-option-content">
+                        <h4>JSON File</h4>
+                        <p>Export as JSON - Best for backup and re-importing</p>
+                    </div>
+                    <span class="export-arrow">&#8595;</span>
+                </div>
+                
+                <div class="import-option" id="exportText">
+                    <div class="import-option-icon">&#128196;</div>
+                    <div class="import-option-content">
+                        <h4>Text File</h4>
+                        <p>Export as plain text with URLs and titles</p>
+                    </div>
+                    <span class="export-arrow">&#8595;</span>
+                </div>
+                
+                <div class="import-option" id="exportCSV">
+                    <div class="import-option-icon">&#128202;</div>
+                    <div class="import-option-content">
+                        <h4>CSV File</h4>
+                        <p>Export as spreadsheet format for Excel/Sheets</p>
+                    </div>
+                    <span class="export-arrow">&#8595;</span>
+                </div>
+                
+                <div class="import-option" id="exportHTML">
+                    <div class="import-option-icon">&#127760;</div>
+                    <div class="import-option-content">
+                        <h4>HTML Bookmarks</h4>
+                        <p>Export as browser-compatible bookmarks file</p>
+                    </div>
+                    <span class="export-arrow">&#8595;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Link Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Link</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="linkForm">
+                <div class="form-group">
+                    <label for="linkTitle">Title</label>
+                    <input type="text" id="linkTitle" placeholder="Enter link title" required>
+                </div>
+                <div class="form-group">
+                    <label for="linkUrl">URL</label>
+                    <input type="url" id="linkUrl" placeholder="https://example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="linkCategory">Category</label>
+                    <div class="category-selector">
+                        <label class="category-option">
+                            <input type="radio" name="category" value="learning" required>
+                            <span class="category-badge learning">&#128218; Learning</span>
+                        </label>
+                        <label class="category-option">
+                            <input type="radio" name="category" value="work">
+                            <span class="category-badge work">&#128188; Work</span>
+                        </label>
+                        <label class="category-option">
+                            <input type="radio" name="category" value="personal">
+                            <span class="category-badge personal">&#127968; Personal</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="linkDescription">Description (Optional)</label>
+                    <textarea id="linkDescription" placeholder="Add a short description..." rows="3"></textarea>
+                </div>
+                <input type="hidden" id="linkId">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Link</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModalOverlay">
+        <div class="modal delete-modal">
+            <div class="delete-icon">&#9888;</div>
+            <h3>Delete Link?</h3>
+            <p>Are you sure you want to delete this link? This action cannot be undone.</p>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="cancelDelete">Cancel</button>
+                <button class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
